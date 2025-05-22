@@ -1,0 +1,122 @@
+{
+  "info": {
+    "name": "Task API Extended",
+    "_postman_id": "87654321-abcd-ef00-1234-56789abcdef0",
+    "description": "Коллекция для Task API с полным CRUD и JWT",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8880/api",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "task_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{base_url}}/register", "host": ["{{base_url}}"], "path": ["register"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"your_password\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{base_url}}/login_check", "host": ["{{base_url}}"], "path": ["login_check"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"your_password\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  var json = pm.response.json();",
+              "  pm.collectionVariables.set(\"jwt_token\", json.token);",
+              "  console.log(\"JWT token saved to collection variable.\");",
+              "} else {",
+              "  console.log(\"Login failed.\");",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Tasks",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+        "url": { "raw": "{{base_url}}/tasks", "host": ["{{base_url}}"], "path": ["tasks"] }
+      }
+    },
+    {
+      "name": "Create Task",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{base_url}}/tasks", "host": ["{{base_url}}"], "path": ["tasks"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Новая задача\",\n  \"description\": \"Описание задачи\",\n  \"status\": \"new\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Get Task by ID",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+        "url": { "raw": "{{base_url}}/tasks/{{task_id}}", "host": ["{{base_url}}"], "path": ["tasks", "{{task_id}}"] }
+      }
+    },
+    {
+      "name": "Update Task",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{base_url}}/tasks/{{task_id}}", "host": ["{{base_url}}"], "path": ["tasks", "{{task_id}}"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Обновленная задача\",\n  \"description\": \"Обновленное описание\",\n  \"status\": \"in_progress\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Delete Task",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+        "url": { "raw": "{{base_url}}/tasks/{{task_id}}", "host": ["{{base_url}}"], "path": ["tasks", "{{task_id}}"] }
+      }
+    }
+  ]
+}

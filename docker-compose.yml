@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: symfony_app
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8880:80"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://user:password@db:5432/db_tasks?serverVersion=15&charset=utf8"
+    command: >
+      bash -c "composer install &&
+               php bin/console doctrine:database:create --if-not-exists &&
+               php bin/console make:migration &&
+               php bin/console doctrine:migrations:migrate --no-interaction &&
+               php -S 0.0.0.0:80 -t public"
+
+  db:
+    image: postgres:15
+    container_name: symfony_db
+    environment:
+      POSTGRES_DB: db_tasks
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: symfony_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  db_data:
+  pgadmin_data:
