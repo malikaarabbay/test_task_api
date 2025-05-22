@@ -65,4 +65,4 @@ symfony server:start
 
 Вы можете загрузить коллекцию из репозитория:
 
-[📥 Скачать Postman Collection](./TaskApiCollection.json)
+[📥 Скачать Postman Collection](./TaskApi.postman_collection.json)
